@@ -1,0 +1,37 @@
+@charset "UTF-8";
+
+	ul
+	{
+		position: fixed;
+		height: 1000px;
+		border-right-width: 0.1em;
+		border-right-style: solid;
+		padding-left: 4px;
+		border-color: #f1f1f1;
+		width: 200px; 
+	}
+	
+	.nav-stacked
+	{
+		font-size: 12pt;
+	}
+	
+	li
+	{
+		border-bottom: solid 1px #c0c0c0;
+		border-color: #f1f1f1;
+	}
+	
+	.img 
+	{ 
+		margin-top: 20px;
+		margin-bottom: 20px; 
+	}
+	
+	li:first-child { border-bottom: none; } 
+	
+	li .img:hover
+	{
+		background-color: transparent !important;
+	}
+	

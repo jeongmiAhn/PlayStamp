@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.playstamp.mseat.mybatis.IMSeatDAO">
+
+	<!-- 예술의전당 리스트 호출 -->
+	<select id="listSac" resultType="com.playstamp.mseat.MSeat" parameterType="String">
+		SELECT VIEWRATING, LIGHTRATING, SOUNDRATING, SEATRATING
+		FROM VIEW_MSEATDETAIL
+		WHERE THEATER='예술의전당' AND MSEAT_SORT_CD=#{seatName, jdbcType=INTEGER}
+	</select>
+	
+	<!-- 블루스퀘어 리스트 호출 -->
+	<select id="listBs" resultType="com.playstamp.mseat.MSeat" parameterType="String">
+		SELECT VIEWRATING, LIGHTRATING, SOUNDRATING, SEATRATING
+		FROM VIEW_MSEATDETAIL
+		WHERE THEATER='블루스퀘어' AND MSEAT_SORT_CD=#{seatName, jdbcType=INTEGER}
+	</select>
+	
+	<!-- 
+	충무아트센터 리스트 호출
+	<select id="listCac" resultType="com.test.mvc.MSeatDTO" parameterType="String">
+		SELECT VIEWRATING, LIGHTRATING, SOUNDRATING, SEATRATING
+		FROM VIEW_MSEATDETAIL
+		WHERE THEATER='충무아트센터' AND MSEAT_SORT_CD=#{seatName, jdbcType=INTEGER}
+	</select>
+	
+	디큐브아트센터 리스트 호출
+	<select id="listDca" resultType="com.test.mvc.MSeatDTO" parameterType="String">
+		SELECT VIEWRATING, LIGHTRATING, SOUNDRATING, SEATRATING
+		FROM VIEW_MSEATDETAIL
+		WHERE THEATER='디큐브아트센터' AND MSEAT_SORT_CD=#{seatName, jdbcType=INTEGER}
+	</select>
+	
+	샤롯데씨어터 리스트 호출
+	<select id="listClt" resultType="com.test.mvc.MSeatDTO" parameterType="String">
+		SELECT VIEWRATING, LIGHTRATING, SOUNDRATING, SEATRATING
+		FROM VIEW_MSEATDETAIL
+		WHERE THEATER='샤롯데씨어터' AND MSEAT_SORT_CD=#{seatName, jdbcType=INTEGER}
+	</select>
+	 -->
+</mapper>

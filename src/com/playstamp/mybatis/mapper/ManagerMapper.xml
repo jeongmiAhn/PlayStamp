@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.playstamp.manager.manage.mybatis.IManager">
+
+	<!-- 관리자 리스트 조회 -->
+	<!-- 
+	<select id="managerList" resultType="com.playstamp.manager.manage.ManagerList">
+		SELECT ROWNUM, MNG_ID, MNG_NM, MNG_NICK, MNG_TEL 
+		FROM TBL_MANAGER
+	</select>
+	 -->
+	 
+	<!-- 관리자 리스트 조회(페이징 테스트) -->
+	<select id="managerList" resultType="com.playstamp.manager.manage.ManagerList">
+		SELECT ROWNUM, MNG_ID, MNG_NM, MNG_NICK, MNG_TEL 
+		FROM TBL_MANAGER
+	</select>
+	
+	
+	<!-- 유저 입력 아이디 중복체크 -->
+	<select id="managerdCheck" parameterType="String" resultType="int">
+		SELECT COUNT(*) AS COUNT 
+		FROM TBL_MANAGER 
+		WHERE MNG_ID = #{arg0}
+	</select>
+	
+	<!-- 관리자 등록 -->
+	<insert id="managerInsert">
+		INSERT INTO TBL_MANAGER (MNG_CD, MNG_ID, MNG_PW, MNG_NM, MNG_NICK, MNG_TEL)
+		VALUES ('M' || TO_CHAR(SEQ_MANAGER.NEXTVAL), #{mng_id}, #{mng_pw}, #{mng_nm}, #{mng_nick}, #{mng_tel})
+	</insert>
+	
+	<!-- 특정 관리자 정보 조회 -->
+	<select id="managerInfo" resultType="com.playstamp.manager.manage.Manager">
+		SELECT MNG_CD, MNG_ID, MNG_PW, MNG_NM, MNG_NICK, MNG_TEL
+		FROM TBL_MANAGER
+		WHERE MNG_ID = #{arg0}
+	</select>
+	
+	<!-- 관리자 정보 수정 -->
+	<update id="managerUpdate">
+		UPDATE TBL_MANAGER
+		SET MNG_ID = #{mng_id}, MNG_PW = #{mng_pw}, MNG_NM = #{mng_nm}
+					, MNG_NICK=#{mng_nick}, MNG_TEL=#{mng_tel}
+		WHERE MNG_ID = #{mng_id}
+	</update>
+	
+	<!-- 관리자 정보 수정 -->
+	<delete id="managerDelete" parameterType="String">
+		DELETE
+		FROM TBL_MANAGER
+		WHERE MNG_ID = #{mng_id}
+	</delete>
+	
+
+</mapper>

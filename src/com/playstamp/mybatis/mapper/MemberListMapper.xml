@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.playstamp.manager.memberlist.mybatis.IMemberListDAO">
+
+	<!-- 회원 리스트 조회 -->
+	<select id="memberlist" resultType="com.playstamp.manager.memberlist.MemberList">
+	<![CDATA[
+		SELECT MEMBERNUM, USER_ID, USER_NICK, USER_MAIL, JOIN_DT, POINT, GRADE
+		FROM
+			(
+				SELECT MEMBERNUM, USER_ID, USER_NICK, USER_MAIL, JOIN_DT, POINT, GRADE
+				FROM
+				(SELECT ROW_NUMBER() OVER(ORDER BY JOIN_DT) AS MEMBERNUM, I.USER_ID, I.USER_NICK, I.USER_MAIL, TO_CHAR(TO_DATE(I.JOIN_DT,'YYYY-MM-DD'),'YY-MM-DD') AS JOIN_DT, G.POINT, G.GRADE
+				 FROM TBL_USERINFO I JOIN VIEW_MEMBERPOINT M
+				      ON I.USER_ID = M.USER_ID
+				          JOIN VIEW_MEMBERGRADE G
+				          ON G.USER_ID = M.USER_ID
+				 ORDER BY MEMBERNUM DESC
+			)
+			WHERE MEMBERNUM <= #{total} - ((#{pageNum}-1) * #{amount})
+	   	)
+		WHERE MEMBERNUM > #{total} - (#{pageNum}*#{amount})
+	]]>
+	</select>
+	
+	
+	<!-- 총 회원 수 조회 -->
+	<select id="membercount" resultType="Integer">
+		SELECT COUNT(*)
+		FROM TBL_USERINFO
+	</select>
+	
+	
+	<!-- GOTOPOINT 프로시저 실행 -->
+	<insert id="modifypoint" parameterType="String" statementType="CALLABLE">
+  			{call PRC_GTPOINT_INSERT(#{arg0},#{arg1})}
+	</insert>
+	
+	
+	<!-- 특정 회원의 포인트 내역 리스트 갯수 조회 -->
+	<select id="countmanagingpointlist" parameterType="String" resultType="Integer">
+		SELECT NVL(SUM(COUNT(*)),0)
+		FROM
+		(
+		SELECT NVL(POINT_Y, '관리자 등록') AS POINT_Y, POINT_DT, POINT, SUM(POINT) OVER(ORDER BY POINT_DT) AS USER_POINT
+		FROM 
+		(SELECT POINT_Y, POINT_DT, POINT
+		FROM TBL_POINT P LEFT JOIN TBL_POINT_Y PY
+		ON PY.POINT_Y_CD = P.POINT_Y_CD
+		    LEFT JOIN TBL_USERINFO U
+		    ON P.USER_CD = U.USER_CD
+		WHERE U.USER_ID = #{user_id, jdbcType=VARCHAR}
+		UNION
+		SELECT NULL, GTPOINT_DT AS POINT_DT, GTPOINT AS POINT
+		FROM TBL_GTPOINT GT LEFT JOIN TBL_USERINFO U
+		ON GT.USER_CD = U.USER_CD
+		WHERE U.USER_ID = #{user_id, jdbcType=VARCHAR})
+		ORDER BY POINT_DT DESC)
+		GROUP BY (POINT_Y, POINT_DT, POINT, USER_POINT)
+	</select>
+	
+	
+	<!-- 특정 회원 포인트 조회 -->
+	<select id="managingpointlist" resultType="com.playstamp.manager.memberlist.ManagingPointList">
+	<![CDATA[	
+		SELECT POINTNUM, POINT_Y, POINT_DT, POINT, USER_POINT
+        FROM
+	        (
+		        SELECT POINTNUM, POINT_Y, POINT_DT, POINT, USER_POINT
+		        FROM 
+				(SELECT ROW_NUMBER() OVER(ORDER BY POINT_DT) AS POINTNUM, NVL(POINT_Y, '관리자 등록') AS POINT_Y, POINT_DT, POINT, SUM(POINT) OVER(ORDER BY POINT_DT) AS USER_POINT
+				FROM 
+				(SELECT POINT_Y, POINT_DT, POINT
+				FROM TBL_POINT P LEFT JOIN TBL_POINT_Y PY
+				ON PY.POINT_Y_CD = P.POINT_Y_CD
+				    LEFT JOIN TBL_USERINFO U
+				    ON P.USER_CD = U.USER_CD
+				WHERE U.USER_ID = #{user_id, jdbcType=VARCHAR}
+				UNION
+				SELECT NULL, GTPOINT_DT AS POINT_DT, GTPOINT AS POINT
+				FROM TBL_GTPOINT GT LEFT JOIN TBL_USERINFO U
+				ON GT.USER_CD = U.USER_CD
+				WHERE U.USER_ID = #{user_id, jdbcType=VARCHAR})
+				ORDER BY POINTNUM DESC
+	        )
+			WHERE POINTNUM <= #{total} - ((#{pageNum}-1) * #{amount})
+	   	)
+		WHERE POINTNUM > #{total} - (#{pageNum}*#{amount})
+	]]>	
+	</select>
+	
+	
+	<!-- 회원 검색 -->
+	<!-- <select id="searchmember" resultType="com.playstamp.manager.memberlist.MemberList" parameterType="String">
+		SELECT ROWNUM AS MEMBERNUM, USER_ID, USER_NICK, USER_NM, USER_MAIL, JOIN_DT, POINT, GRADE
+		FROM
+		(SELECT I.USER_ID, I.USER_NICK, I.USER_NM, I.USER_MAIL, TO_CHAR(TO_DATE(I.JOIN_DT,'YYYY-MM-DD'),'YY-MM-DD') AS JOIN_DT, G.POINT, G.GRADE
+		FROM TBL_USERINFO I JOIN VIEW_MEMBERPOINT M
+		    ON I.USER_ID = M.USER_ID
+		        JOIN VIEW_MEMBERGRADE G
+		        ON G.USER_ID = M.USER_ID
+		ORDER BY I.JOIN_DT)
+		WHERE USER_ID LIKE '%'||#{user_id}||'%'
+		ORDER BY MEMBERNUM DESC
+	</select> -->	
+	
+</mapper>

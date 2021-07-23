@@ -1,0 +1,153 @@
+@charset "UTF-8";
+
+body {
+    background-color: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 130vh
+}
+
+.card {
+    width: 800px;
+    padding: 20px; 
+    border: none;
+    margin-top: 50px;
+    margin-bottom: 80px;
+}
+
+.account {
+    font-weight: 500;
+    font-size: 17px
+}
+
+.contact {
+    font-size: 13px
+}
+
+.form-control {
+    text-indent: 14px;
+}
+
+.form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #4a148c;
+    outline: 0;
+    box-shadow: none
+}
+
+.inputbox {
+    margin-bottom: 10px;
+    position: relative
+}
+
+.inputbox i {
+    position: absolute;
+    left: 8px;
+    top: 12px;
+    color: #dadada
+}
+
+.form-check-label {
+    font-size: 13px
+}
+
+.form-check-input {
+    width: 14px;
+    height: 15px;
+    margin-top: 5px
+}
+
+.forgot {
+    font-size: 14px;
+    text-decoration: none;
+    color: #4A148C
+}
+
+.mail {
+    color: #4a148c;
+    text-decoration: none
+}
+
+.form-check {
+    cursor: pointer
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #4A148C;
+    border-color: #4A148C
+}
+
+#kakaoLogin
+{
+	background-color: #f9c206;
+	border-color: #f9c206;
+}
+
+#naverLogin
+{
+	background-color: #00b500;
+	border-color: #00b500;
+}
+
+#naverImg, #kakaoImg
+{
+	width: 5%;
+	margin-right: 5%;
+}
+
+.findInfo
+{
+	font-size: 10pt;
+	text-align: center;
+}
+
+#signupBtn
+{
+	width: 20% !important;
+}
+/* 
+.mt-4 text-center
+{
+	width: 400pt;
+}
+ */
+#phone1, #phone2, #phone3
+{
+	width: 30%;
+}
+
+.mb-3, .mb-4, .btn.btn-primary.btn-lg.btn-block
+{
+	width: 300pt;
+	margin:0 auto;
+	font-weight: bold;
+}
+
+#nameCheck, #nicknameCheck
+{
+	font-size: 10pt;
+	background-color: white;
+	color: black;
+	width: 90px;
+}
+
+#emailFirst
+{
+	display: block;
+    width: 30%;
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+	
+}

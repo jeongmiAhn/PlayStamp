@@ -1,0 +1,237 @@
+@charset "UTF-8";
+
+	.ratingContainer
+	{
+		position: relative;
+        right: 87px;
+        size: 120px;
+	}
+	
+	.reviewComment, .reviewLike
+	{
+		width: 25px;
+		border: none;
+		align: left;
+		color: black;
+		background-color: #fafafa;
+		font-size: 10pt;
+	}
+	
+	.reviewComment
+	{
+		margin-left: 5px;
+	}
+	
+	.user
+	{
+		font-weight: bold;
+		font-size: 16px;
+		border: none;
+		background-color: #fafafa;
+		color: black;
+		padding: 5px;
+		right: 20px;
+		position: relative;
+		margin-top: 5px;
+	}
+	
+	.userName
+	{
+		background-color: #fafafa;
+		border: none;
+	}
+	
+	#userImage
+	{
+		border-radius: 70%;
+    	overflow: hidden;
+    	width: 26px; 
+    	height: 26px;
+    	vertical-align: middle;
+	}
+	
+	.playName
+	{
+		border: 1px solid;
+		text-align: center;
+		padding: 1px;
+		border-radius: 1em;
+		font-size: 12pt;
+		font-weight: bold;
+		color: black;
+		padding: 5px;
+		margin-top: 10px;
+		width: 280px;
+		
+		white-space: nowrap;
+		overflow: hidden;
+  		text-overflow: ellipsis;
+  		border-color: #c2c2c2;
+	}
+	
+	#pageTitle1, #pageTitle2, #pageTitle3
+	{
+		font-size: 15px;
+		font-weight: bold;
+		left: 70px;
+		margin-bottom: 0px;
+		height: 34px;
+	}
+	
+	.reviewContent
+	{
+		height: 70.5px;
+		width: 300px;
+		display: block;
+		background-color: #fafafa;
+		
+		left: 14px;
+		font-size: 10pt;
+		color: black;
+		padding: 10px;
+		
+		white-space: pre-line; 
+		overflow: hidden;
+  		text-overflow: ellipsis;
+  		
+  		
+  		text-align: justify;
+  		border: 1px solid;
+  		position: relative;
+  		border-color: #c2c2c2;
+	}
+	
+	#imgContainer, #reviewContainer
+	{
+		width: 1100px;
+		text-align: center;
+		margin: 0 auto;
+		background-color: #fafafa;
+		height: 360px;
+	}
+	
+	#reviewContainer
+	{
+		height: 290px;
+	}
+	
+	.thumbnail
+	{
+		margin-top: 10px;
+		margin-bottom: 2px;
+		background-color: #fafafa;
+	}
+	
+	.playTitle
+	{
+		font-size: 15px;
+		font-weight: bold;
+		overflow: hidden;
+  		text-overflow: ellipsis;
+  		width: 245px;
+  		white-space: nowrap;
+  		margin-top: 5px;
+	}
+		
+	.reviewTitle
+	{
+		font-size: 25px;
+		font-weight: bold;
+		border: none;
+		background-color: #fafafa;
+		width: 280px;
+		color: black;
+		padding-top: 10px;
+		text-align: left;
+		
+		white-space: nowrap;
+		overflow: hidden;
+  		text-overflow: ellipsis;
+	}
+	
+	.playRating
+	{
+		border: none;
+		background-color: #fafafa;
+		font-size: 40px;
+		font-weight: bold;
+		color: black;
+		margin: 0 auto;
+		width: 280px;
+		padding: 0 0 0 0;
+		line-height: 32px;
+	}
+	
+	input:focus
+	{
+		outline: none;
+	}
+	
+	.likecomment
+	{
+		background-color: #fafafa;
+		position: relative;
+		left: 105px;
+		bottom: 5px;
+	}
+	
+	.next, .prev
+	{
+		border: 1px solid;
+		border-color: #d9d9d9;
+		border-radius: 1em;
+		font-size: 13pt;
+		padding-left: 10px;
+		padding-right: 10px;
+		color: #7e7e7e;
+	}
+	
+	
+	#nextReview
+	{
+		position: relative;
+		left: 1320px;
+		bottom: 200px;
+	}
+	
+	#prevReview
+	{
+		position: relative;
+		left: 140px;
+		bottom: 200px; 
+	}
+	
+	#nextLike
+	{
+		position: relative;
+		left: 1320px;
+		bottom: 150px;
+	}
+	
+	#prevLike
+	{
+		position: relative;
+		left: 140px;
+		bottom: 150px; 
+	}
+	
+	#nextRating
+	{
+		position: relative;
+		left: 1320px;
+		bottom: 190px;
+	}
+	
+	#prevRating
+	{
+		position: relative;
+		left: 140px;
+		bottom: 190px; 
+	}
+
+	.playthumbnail
+	{
+		
+	}
+
+	

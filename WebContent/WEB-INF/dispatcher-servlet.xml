@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:p="http://www.springframework.org/schema/p"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/mvc 
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd"
+    xmlns:mvc="http://www.springframework.org/schema/mvc">
+
+
+   <mvc:annotation-driven />
+   <context:annotation-config />
+
+   <!-- ① 기존 코드 -->
+   <!-- ※ Annotation 표기법으로 Controller 객체를 등록한다. -->
+    <context:component-scan base-package="com.playstamp.*" />
+   <!-- ③ mybatis 설정 중 ... dataSource 를 등록하는 과정에서 생겨나는 추가 코드 -->
+   <!-- ※ mybatis 를 사용하기 위한 환경 설정 추가 2 → SimpleDriverDataSource -->
+   <bean id="localDataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+      <property name="driverClass" value="oracle.jdbc.driver.OracleDriver"></property>
+      <property name="url" value="jdbc:oracle:thin:@192.168.0.7:1521/xe"></property>
+      <property name="username" value="jeongmi"></property>
+      <property name="password" value="java006$"></property>
+   </bean>
+
+   <!-- ② mybatis 등록 과정에서 생겨나는 추가 코드 -->
+   <!-- ※ mybatis 를 사용하기 위한 환경 설정 추가 1 → sqlSessionFactoryBean (Builder 대체) -->
+   <!-- ※ 속성 구성 → dataSource / mapperLocations-->
+   <!-- ④ localDataSource 구성 후 마저 등록해서 완성 → dataSource -->
+   <!-- ⑤ 매퍼 파일 (SampleDAO.xml) 작성 후 마저 등록해서 완성 → mapperLocations -->
+   <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+      <property name="dataSource" ref="localDataSource"></property>
+      <property name="mapperLocations" value="classpath:com/playstamp/mybatis/mapper/*.xml"></property>
+   </bean>
+
+
+   <!-- ⑥ sqlSession 등록 과정에서 생겨나는 추가 코드 -->
+   <!-- ※ mybatis 를 사용하기 위한 환경 설정 추가 3 → sqlSessionTemplate -->
+   <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+      <constructor-arg index="0" ref="sqlSessionFactory"></constructor-arg>
+   </bean>
+
+
+
+    <!-- Configures Handler Interceptors -->
+    <mvc:interceptors>
+     <mvc:interceptor>
+   
+      <mvc:mapping path="/*.action" />
+
+      <bean id="interceptor" class="com.playstamp.user.Interceptor"></bean>
+     </mvc:interceptor>
+    </mvc:interceptors>
+  
+    
+    <!-- email 인증 관련   -->
+     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.gmail.com" />
+        <property name="port" value="587" />
+        <property name="username" value="shyunnkk@gmail.com"/>
+        <property name="password" value="tjgusS1212" />
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.transport.protocol">smtp</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.debug">true</prop>
+            </props>
+        </property>
+    </bean>
+	
+</beans>

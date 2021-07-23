@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.playstamp.home.mybatis.IHomeDAO">
+
+   <!-- 리뷰 많은순 공연 리스트 호출 -->
+   <select id="highReviewSorting" resultType="com.playstamp.home.Home">
+      SELECT PLAY_CD, PLAY_NM, PLAY_IMG
+      FROM VIEW_HIGHREVIEW
+      ORDER BY REVIEW_COUNT DESC
+   </select>
+   
+   <!-- 좋아요 많은순 리뷰 리스트 호출 -->
+   <select id="highLikeSorting" resultType="com.playstamp.home.Home">
+      SELECT PLAYREV_CD, PLAY_CD, USER_IMG, USER_NICK, PLAY_NM, TITLE, RATING_CD, CONTENTS, LIKE_COUNT, COMMENT_COUNT
+      FROM VIEW_HIGHLIKE
+      ORDER BY LIKE_COUNT DESC
+   </select>
+   
+   <!-- 평점 높은순 공연 리스트 호출 -->
+   <select id="highRateSorting" resultType="com.playstamp.home.Home">
+      SELECT PLAY_CD, PLAY_NM, PLAY_IMG
+      FROM VIEW_HIGHRATING
+      ORDER BY AVG_RATING DESC
+   </select>
+
+</mapper>

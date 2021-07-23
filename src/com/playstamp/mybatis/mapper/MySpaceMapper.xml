@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.playstamp.myspace.mybatis.IMyspaceDAO">
+
+	<!-- 사용자 수 -->
+	<select id="totalUser" resultType="Integer">
+		SELECT COUNT(*)
+		FROM TBL_USER
+	</select>
+	
+	<!-- 유저 정보 조회 -->
+	<select id="searchUserInfo" parameterType="String" resultType="com.playstamp.user.User">
+		SELECT *
+		FROM TBL_USERINFO
+		WHERE USER_ID = #{user_Id}
+	</select>
+	
+	
+	<!-- 유저 정보 업데이트 -->
+	<update id="updateUserInfo">
+		UPDATE TBL_USERINFO
+		SET USER_NICK = #{user_Nick}, USER_TEL=#{user_Tel}, USER_PW=#{user_Pw}
+		WHERE USER_ID = #{user_Id}
+	</update>
+	
+	
+	<!-- 유저 프로필 업데이트 -->
+	<update id="updateUserImg">
+		UPDATE TBL_USERINFO
+		SET USER_IMG = #{arg1}
+		WHERE USER_ID = #{arg0}
+	</update>
+	
+	
+	<!-- 포인트 내역 총 개수 출력 -->
+	<select id="userPointListTotal" parameterType="String" resultType="Integer">
+		SELECT COUNT(*)
+		FROM VIEW_USER_PLIST
+		WHERE USER_CD=#{user_cd}
+	</select>
+	
+	
+	<!-- 특정 유저의 현재 포인트 -->
+	<select id="userPoint" parameterType="String" resultType="Integer">
+		SELECT POINT
+		FROM VIEW_MEMBERPOINT
+		WHERE USER_CD = #{arg0}
+	</select>
+	
+	<!-- 유저 포인트 조회(페이징 적용) -->
+	<select id="userPointList" resultType="com.playstamp.myspace.Point">
+	<![CDATA[
+		SELECT BNO, POINT_Y, POINT_DT, POINT, USER_POINT
+		FROM
+		(
+		    SELECT BNO, POINT_Y, POINT_DT, POINT, USER_POINT
+		    FROM
+		    (
+		        SELECT BNO, POINT_Y, POINT_DT, POINT, USER_POINT
+				FROM 
+				(
+				    SELECT ROW_NUMBER() OVER(ORDER BY POINT_DT) AS BNO, NVL(POINT_Y, '관리자 등록') AS POINT_Y, POINT_DT, POINT, SUM(POINT) OVER(ORDER BY POINT_DT) AS USER_POINT
+				    FROM 
+				    (
+				        SELECT POINT_Y, POINT_DT, POINT
+				        FROM TBL_POINT P LEFT JOIN TBL_POINT_Y PY
+				        ON PY.POINT_Y_CD = P.POINT_Y_CD
+				            LEFT JOIN TBL_USERINFO U
+				            ON P.USER_CD = U.USER_CD
+				        WHERE U.USER_CD = #{user_cd}
+				        UNION
+				        SELECT NULL, GTPOINT_DT AS POINT_DT, GTPOINT AS POINT
+				        FROM TBL_GTPOINT GT LEFT JOIN TBL_USERINFO U
+				        ON GT.USER_CD = U.USER_CD
+				        WHERE U.USER_CD = #{user_cd}
+				    )
+				    ORDER BY BNO DESC
+				)
+		    )
+		    WHERE BNO <= #{total} - ((#{pageNum}-1) * #{amount})
+		)
+		WHERE BNO > #{total} - (#{pageNum}*#{amount})
+	]]>	
+	</select>
+	
+	<!-- 특정 유저의 현재 캐시 -->
+	<select id="userCash" parameterType="String" resultType="int">
+		SELECT USER_CASH
+		FROM
+		    (SELECT USER_CD, ROW_NUMBER() OVER(ORDER BY CASH_DT) AS BNO, CASH_Y, CASH_DT, CASH, NVL(USER_CASH, 0) USER_CASH
+		     FROM VIEW_USER_CLIST
+		     ORDER BY BNO DESC)
+		WHERE USER_CD = #{arg0} 
+		AND ROWNUM = 1
+	</select>
+
+	<!-- 캐시내역 총 개수 출력 -->
+	<select id="userCashListTotal" parameterType="String" resultType="Integer">
+		SELECT COUNT(*)
+		FROM VIEW_USER_CLIST
+		WHERE USER_CD=#{user_cd}
+	</select>
+	
+	
+	<!-- 유저 캐시 조회(페이징 적용) -->
+	<select id="userCashList" resultType="com.playstamp.myspace.Cash">
+	<![CDATA[
+		SELECT BNO, CASH_Y, CASH_DT, CASH, USER_CASH
+		FROM
+		(
+		    SELECT BNO, CASH_Y, CASH_DT, CASH, USER_CASH
+		    FROM
+		    (
+		        SELECT ROW_NUMBER() OVER(ORDER BY CASH_DT) AS BNO, CASH_Y, CASH_DT, CASH, USER_CASH
+		        FROM VIEW_USER_CLIST
+		        WHERE USER_CD = #{user_cd}
+		        ORDER BY BNO DESC
+		    )
+		    WHERE BNO <= #{total} - ((#{pageNum}-1) * #{amount})
+		)
+		WHERE BNO > #{total} - (#{pageNum}*#{amount})
+	]]>
+	</select>
+	
+	
+	<!-- 좋아요 개수 -->
+	<select id="countingLike" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM VIEW_LIKE_COUNT
+		WHERE USER_ID=#{arg0}
+	</select>
+	
+	
+	<!-- 나의 관람 리뷰 개수 -->
+	<select id="countingRev" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM TBL_PLAY_REV R LEFT JOIN TBL_REV_DISTIN D
+		ON R.REV_DISTIN_CD = D.REV_DISTIN_CD
+		WHERE D.USER_CD = #{arg0}
+	</select>
+	
+	
+	<!-- 나의 찜리스트 개수 -->
+	<select id="countingJjim" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM TBL_JJIMS
+		WHERE USER_CD=#{arg0}
+	</select>
+	
+	
+	<!-- (전체) 월별 관람 횟수 통계 -->
+	<select id="statisticRevTotal" parameterType="String" resultType="com.playstamp.myspace.MySpace">
+		SELECT NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'01',1)),0) "jan"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'02',1)),0) "feb"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'03',1)),0) "mar"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'04',1)),0) "apr"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'05',1)),0) "may"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'06',1)),0) "jun"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'07',1)),0) "jul"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'08',1)),0) "aug"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'09',1)),0) "sep"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'10',1)),0) "oct"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'11',1)),0) "nov"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'12',1)),0) "dec"
+		FROM TBL_PLAY_REV
+		WHERE TO_CHAR(PLAY_DT,'YYYY') = #{arg0}
+	</select>
+	
+	<!-- (사용자) 월별 관람 횟수 통계 -->
+	<select id="statisticRevUser" parameterType="String" resultType="com.playstamp.myspace.MySpace">
+		SELECT NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'01',1)),0) "jan"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'02',1)),0) "feb"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'03',1)),0) "mar"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'04',1)),0) "apr"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'05',1)),0) "may"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'06',1)),0) "jun"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'07',1)),0) "jul"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'08',1)),0) "aug"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'09',1)),0) "sep"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'10',1)),0) "oct"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'11',1)),0) "nov"
+				,NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'12',1)),0) "dec" 
+		FROM
+		(
+		SELECT *
+		FROM TBL_PLAY_REV R LEFT JOIN TBL_REV_DISTIN D
+		ON R.REV_DISTIN_CD = D.REV_DISTIN_CD
+		WHERE TO_CHAR(PLAY_DT,'YYYY') = #{arg0} AND D.USER_CD = #{arg1})
+	</select>
+	
+	<!-- (사용자) 동행인 비율 -->
+	<select id="statisticCompanion" resultType="com.playstamp.myspace.MySpaceComp">
+		SELECT NVL(SUM(DECODE(COMPANION_CD,1,1)),0) "c1"
+		     , NVL(SUM(DECODE(COMPANION_CD,2,1)),0) "c2" 
+		     , NVL(SUM(DECODE(COMPANION_CD,3,1)),0) "c3"
+		     , NVL(SUM(DECODE(COMPANION_CD,4,1)),0) "c4"
+		     , NVL(SUM(DECODE(COMPANION_CD,5,1)),0) "c5"
+		     , NVL(SUM(DECODE(COMPANION_CD,6,1)),0) "c6"
+		FROM
+		(
+		SELECT *
+		FROM TBL_PLAY_REV R LEFT JOIN TBL_REV_DISTIN D
+		ON R.REV_DISTIN_CD = D.REV_DISTIN_CD
+		WHERE TO_CHAR(PLAY_DT,'YYYY') = #{arg0} AND D.USER_CD = #{arg1})
+	</select>
+	
+	<!-- (사용자) 관람 금액 통계 -->
+	<select id="statisticMoney" parameterType="String" resultType="com.playstamp.myspace.MySpace">
+		SELECT NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'01',PLAY_MONEY)),0) "jan"
+		     , NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'02',PLAY_MONEY)),0) "feb"
+		     , NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'03',PLAY_MONEY)),0) "mar"
+		     , NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'04',PLAY_MONEY)),0) "apr"
+		     , NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'05',PLAY_MONEY)),0) "may"
+		     , NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'06',PLAY_MONEY)),0) "jun"
+		     , NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'07',PLAY_MONEY)),0) "jul"
+		     , NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'08',PLAY_MONEY)),0) "aug"
+		     , NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'09',PLAY_MONEY)),0) "sep"
+		     , NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'10',PLAY_MONEY)),0) "oct"
+		     , NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'11',PLAY_MONEY)),0) "nov"
+		     , NVL(SUM(DECODE(TO_CHAR(PLAY_DT,'MM'),'12',PLAY_MONEY)),0) "dec" 
+		FROM
+		(
+		SELECT *
+		FROM TBL_PLAY_REV R LEFT JOIN TBL_REV_DISTIN D
+		ON R.REV_DISTIN_CD = D.REV_DISTIN_CD
+		WHERE TO_CHAR(PLAY_DT,'YYYY') = #{arg0} AND D.USER_CD = #{arg1})
+	</select>
+	
+	<!-- 탈퇴하기 -->
+	<insert id="userDropProcedure" statementType="CALLABLE">
+	{
+		CALL PRC_USER_DROP(#{arg0}, #{arg1})
+	}
+	</insert>
+	
+
+</mapper>

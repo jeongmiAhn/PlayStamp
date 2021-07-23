@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.playstamp.play.mybatis.IPlayListDAO"><!-- implements IPlayListDAO -->
+	<!-- list()  -->
+	<!--@@ resultSet 이 따로 있어서 ArrayList 가 아니라 MemberDTO 임!  -->
+	<select id="getMusicalList" resultType="com.playstamp.play.PlayList" parameterType="string">
+		SELECT PLAY_CD, PLAY_IMG
+		FROM VIEW_PLAYLIST
+		WHERE GENRE_CD=1 AND PLAY_STATE=#{playState}
+		ORDER BY PLAY_START DESC
+	</select><!-- 여기서의 name 이나 id 는 고유해야 한다. -->
+	
+	<select id="getDramaList" resultType="com.playstamp.play.PlayList" parameterType="string">
+		SELECT PLAY_CD, PLAY_IMG
+		FROM VIEW_PLAYLIST
+		WHERE GENRE_CD=2 AND PLAY_STATE=#{playState}
+		ORDER BY PLAY_START DESC
+	</select><!-- 여기서의 name 이나 id 는 고유해야 한다. -->
+</mapper>

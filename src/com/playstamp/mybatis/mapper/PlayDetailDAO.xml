@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.playstamp.playdetail.mybatis.IPlayDetailDAO"> <!-- implements IPlayDetailDAO -->
+	<select id="getMseatCheck" resultType="java.lang.Integer" parameterType="string">
+		SELECT REVCHECK
+		FROM VIEW_MSEAT_REVCHECK
+		WHERE PLAY_CD=#{play_cd}
+	</select>
+	
+	<select id="getSeatCheck" resultType="java.lang.Integer" parameterType="string">
+		SELECT REVCHECK
+		FROM VIEW_SEAT_REVCHECK
+		WHERE PLAY_CD=#{play_cd}
+	</select>
+
+	<select id="getMseatRev" resultType="com.playstamp.playdetail.SeatRev" parameterType="string">
+		SELECT PLAY_CD, SEAT_AREA, SEAT_FLOW, SEAT_LINE, SEAT_NUM, PLAY_NM, PLAY_DT, USER_CD
+		, SEAT_REV, VIEW_RATING, SEAT_RATING, LIGHT_RATING, SOUND_RATING, MSEAT_REV_CD
+		FROM VIEW_MSEATREV
+		WHERE PLAY_CD=#{play_cd}
+	</select>
+		
+	<select id="getSeatRev" resultType="com.playstamp.playdetail.SeatRev" parameterType="string">
+		SELECT PLAY_CD, SEAT_AREA, SEAT_FLOW, SEAT_LINE, SEAT_NUM, PLAY_NM, PLAY_DT, USER_CD
+		, SEAT_REV, VIEW_RATING, SEAT_RATING, LIGHT_RATING, SOUND_RATING, SEAT_REV_CD
+		FROM VIEW_SEATREV
+		WHERE PLAY_CD=#{play_cd}
+	</select>
+	
+	<select id="getPlayDetail" resultType="com.playstamp.playdetail.PlayDetail">
+		SELECT PLAY_CD, PLAY_NM, PLAY_START, PLAY_END, THEATER, PLAY_CAST, PLAY_IMG
+		FROM VIEW_PLAYDETAIL
+		WHERE PLAY_CD=#{play_cd}
+	</select>
+	
+	<select id="getPlayRevPre" resultType="com.playstamp.playdetail.PlayRevPre" parameterType="string">
+		SELECT PLAY_CD, PLAY_IMG, PLAYREV_DT, PLAYREV_CD, RATING_CD, PLAY_NM, CONTENTS, LCOUNT, CCOUNT, USER_NICK, TITLE
+		FROM VIEW_PLAYREV
+		WHERE PLAY_CD=#{play_cd}
+	</select>
+	
+	<insert id="addJjim">
+		INSERT INTO TBL_JJIMS(JJIM_CD, PLAY_CD, USER_CD, JJIM_DT)
+		VALUES(JJIM_SEQ.NEXTVAL, #{play_cd}, #{user_cd}, SYSDATE)
+	</insert>
+	
+	<select id="checkJjim" resultType="Integer">
+		SELECT COUNT(*) AS JCOUNT
+		FROM TBL_JJIMS
+		WHERE PLAY_CD=#{play_cd} AND USER_CD=#{user_cd}
+	</select>
+	
+	<delete id="delJjim">
+		DELETE
+		FROM TBL_JJIMS
+		WHERE PLAY_CD=#{play_cd} AND USER_CD=#{user_cd}
+	</delete>
+	
+	<select id="checkRepPlay" resultType="com.playstamp.playdetail.PlayRevBlind" parameterType="string">
+		SELECT PLAYREV_CD, REP_REV_CD, REP_DT, REP_REVCH_CD, REP_ST_CD
+		FROM VIEW_PLAYREV_BLIND
+		WHERE PLAYREV_CD=#{playrev_cd} AND ROWNUM=1
+	</select>
+	
+	<select id="checkRepSeat" resultType="com.playstamp.playdetail.SeatRevBlind" parameterType="string">
+		SELECT SEAT_REV_CD, REP_SEAT_CD, REP_DT, REP_SEATCH_CD, REP_ST_CD
+		FROM VIEW_SEATREV_BLIND
+		WHERE SEAT_REV_CD=#{seat_rev_cd} AND ROWNUM=1
+	</select>
+
+	<select id="checkRepMseat" resultType="com.playstamp.playdetail.MseatRevBlind" parameterType="string">
+		SELECT MSEAT_REV_CD, REP_MSEAT_CD, REP_DT, REP_MSEATCH_CD, REP_ST_CD
+		FROM VIEW_MSEATREV_BLIND
+		WHERE MSEAT_REV_CD=#{mseat_rev_cd} AND ROWNUM=1
+	</select>
+	
+	<select id="getPlayRevPreFirst" resultType="com.playstamp.playdetail.PlayRevPre" parameterType="string">
+		SELECT PLAY_CD, PLAYREV_DT, PLAY_IMG, PLAYREV_CD, RATING_CD, PLAY_NM, CONTENTS, LCOUNT, CCOUNT, USER_NICK, TITLE, ROWNUM
+		FROM VIEW_PLAYREV
+		WHERE PLAY_CD=#{play_cd} AND ROWNUM=1
+	</select>
+	
+	
+	<select id="getRatingAvg" resultType="integer" parameterType="string">
+		SELECT ROUND(SUM(RATING_CD)/COUNT(*))
+		FROM VIEW_RATING_AVG
+		WHERE PLAY_CD=#{play_cd}
+	</select>
+</mapper>

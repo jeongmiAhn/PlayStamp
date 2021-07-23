@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.playstamp.review.mybatis.IAddReviewDAO">
+<!-- 리뷰 등록 3단계에 필요한 메소드를 모두 포함하는 인터페이스 -->
+
+	<!-- 검색 시 공연정보를 모두 가져오는 playList() (공연명: 기간도 추가해서 보여주기)-->
+	<select id="playList" resultType="com.playstamp.review.Play">
+		SELECT play_cd, theater_cd, genre_cd, mng_cd, play_nm
+		     , play_start, play_end, play_img, play_cast
+		FROM VIEW_PLAY
+	</select>
+	
+	<!-- 사용자가 선택한 공연명+날짜에 해당하는 공연코드 반환 -->
+	<select id="searchPlayCd" resultType="java.lang.String">
+		SELECT play_cd
+		FROM VIEW_PLAY
+		WHERE play_nm = '${play_nm}'
+	</select>
+	
+	<!-- 리뷰 식별코드에 insert하는 add -->
+ 	<insert id="addDistinctReview">		
+ 		INSERT INTO TBL_REV_DISTIN(REV_DISTIN_CD, USER_CD, PLAY_CD)
+ 		VALUES('RD' || TO_CHAR(SEQ_REV_DISTIN.NEXTVAL), '${user_cd}', '${play_cd}')
+ 	</insert>
+ 	
+ 	<!-- 리뷰 식별코드 가져오기 -->
+ 	<select id="searchRevDistinCd" resultType="java.lang.String">
+ 		SELECT REV_DISTIN_CD
+		FROM TBL_REV_DISTIN
+		WHERE PLAY_CD='${play_cd}' AND USER_CD='${user_cd}'
+ 	</select>
+ 	
+ 	<!-- 공연 코드로 공연 관련 모든 정보 가져오기 -->
+ 	<select id="searchPlay" resultType="com.playstamp.review.Play">
+ 		SELECT P.PLAY_CD "PLAY_CD", P.THEATER_CD "THEATER_CD", T.THEATER "THEATER"
+      , P.GENRE_CD "GENRE_CD", P.PLAY_NM "PLAY_NM"
+      , P.PLAY_START "PLAY_START", P.PLAY_END "PLAY_END", P.PLAY_IMG "PLAY_IMG", P.PLAY_CAST "PLAY_CAST"
+		FROM TBL_PLAY P, TBL_THEATER T
+		WHERE P.PLAY_CD='${play_cd}' AND P.THEATER_CD = T.THEATER_CD
+ 	</select>
+ 	
+ 	<!-- 공연 코드로 공연장 코드 가져오기 -->
+ 	<select id="searchTheater" resultType="java.lang.String">
+ 		SELECT THEATER_CD
+		FROM TBL_PLAY
+		WHERE PLAY_CD='${play_cd}'
+ 	</select>
+ 	
+ 	<!-- 리뷰식별코드로 공연 코드 가져오기 -->
+ 	<select id="playCdByDistin" resultType="java.lang.String">
+ 		SELECT PLAY_CD
+		FROM TBL_REV_DISTIN
+		WHERE REV_DISTIN_CD = '${rev_distin_cd}'
+ 	</select>
+ 	
+ 	<!-- 일반 공연장의 좌석 리뷰 테이블에 insert -->
+ 	<insert id="addSeatReview">	
+		INSERT INTO TBL_SEAT_REV(SEAT_REV_CD, REV_DISTIN_CD
+		, VIEW_RATING, SEAT_RATING, LIGHT_RATING, SOUND_RATING,
+		SEAT_FLOW, SEAT_AREA, SEAT_LINE, SEAT_NUM, SEAT_REV) 
+		VALUES('SR' || TO_CHAR(SEQ_SEAT_REV.NEXTVAL), '${rev_distin_cd}'
+		, '${view_rating}', '${seat_rating}', '${light_rating}', '${sound_rating}',
+		'${seat_flow}', '${seat_area}', '${seat_line}', '${seat_num}', '${seat_rev}')
+ 	</insert>
+ 	
+ 	<!-- 5대 공연장의 좌석 리뷰 테이블에 insert -->
+ 	<insert id="addMSeatReview">
+		INSERT INTO TBL_MSEAT_REV(MSEAT_REV_CD, REV_DISTIN_CD, MSEAT_SORT_CD
+		, VIEW_RATING, SEAT_RATING, LIGHT_RATING, SOUND_RATING,
+		SEAT_FLOW, SEAT_AREA, SEAT_LINE, SEAT_NUM, SEAT_REV, SEATREV_DT) 
+		VALUES('MSR' || TO_CHAR(SEQ_MSEAT_REV.NEXTVAL), '${rev_distin_cd}', ${mseat_sort_cd}
+		, ${view_rating}, ${seat_rating}, ${light_rating}, ${sound_rating}
+		, ${seat_flow}, '${seat_area}', '${seat_line}', ${seat_num}, '${seat_rev}', SYSDATE)
+ 	</insert>
+ 	
+ 	<!-- 공연장 코드로 공연장 명 가져오기 -->
+ 	<select id="searchTheaterName" resultType="java.lang.String">
+ 		SELECT THEATER
+		FROM TBL_THEATER
+		WHERE THEATER_CD='${theater_cd}'
+ 	</select>
+ 	
+ 	<!-- 함께 본 사람 select 리스트 가져오기 -->
+ 	<select id="companion" resultType="com.playstamp.review.Companion">
+ 		SELECT COMPANION
+		FROM TBL_COMPANION
+ 	</select>
+ 	
+ 	<!-- 공연 리뷰 테이블에 insert -->						
+ 	<insert id="addReviewDetail">
+		INSERT INTO TBL_PLAY_REV(PLAYREV_CD, REV_DISTIN_CD, COMPANION_CD
+		, TITLE, RATING_CD, CONTENTS, PLAY_IMG, PLAY_DT, PLAY_TIME, PLAY_MONEY, PLAY_CAST)
+		VALUES('PR' || TO_CHAR(SEQ_PLAY_REV.NEXTVAL), '${rev_distin_cd}', ${companion_cd}, '${title}'
+		, ${rating_cd}, '${contents}', '${play_img}', TO_DATE('${play_dt}', 'YY/MM/DD'), '${play_time}'
+		, ${play_money}, '${play_cast}')
+ 	</insert>
+ 	
+ 	<!-- 나의 공연 리뷰 포스터 형식 리스트 조회 -->
+ 	<select id="myReviewPoster" resultType="com.playstamp.review.MyReviewPoster">
+		SELECT R.REV_DISTIN_CD "REV_DISTIN_CD", R.USER_CD "USER_CD", R.PLAY_CD "PLAY_CD", PR.PLAY_IMG "PLAY_IMG", PR.TITLE "TITLE"
+		FROM TBL_REV_DISTIN R, TBL_PLAY P, TBL_PLAY_REV PR
+		WHERE R.PLAY_CD = P.PLAY_CD AND USER_CD='${user_cd}' AND R.REV_DISTIN_CD = PR.REV_DISTIN_CD
+ 	</select>
+ 	
+ 	<!-- 나의 공연 리뷰 상세 조회 (일반 공연장 좌석)-->
+ 	<select id="getSeatReview" resultType="com.playstamp.review.SeatReview">
+ 		SELECT SEAT_REV_CD, REV_DISTIN_CD
+		, VIEW_RATING, SEAT_RATING, LIGHT_RATING, SOUND_RATING
+		, SEAT_FLOW, SEAT_AREA, SEAT_LINE, SEAT_NUM, SEAT_REV, SEATREV_DT
+		FROM TBL_SEAT_REV
+		WHERE REV_DISTIN_CD='${rev_distin_cd}'
+ 	</select>
+ 	
+ 	<!-- 나의 공연 리뷰 상세 조회 (5대 공연장 좌석) -->
+ 	 <select id="getMSeatReview" resultType="com.playstamp.review.MSeatReview">
+ 		SELECT MSEAT_REV_CD, REV_DISTIN_CD, MSEAT_SORT_CD
+		, VIEW_RATING, SEAT_RATING, LIGHT_RATING, SOUND_RATING
+		, SEAT_FLOW, SEAT_AREA, SEAT_LINE, SEAT_NUM, SEAT_REV, SEATREV_DT
+		FROM TBL_MSEAT_REV
+		WHERE REV_DISTIN_CD='${rev_distin_cd}'
+ 	</select>
+ 	
+ 	<!-- 나의 공연 리뷰 상세 조회 (공연 리뷰) -->
+ 	<select id="getReviewDetail" resultType="com.playstamp.review.ReviewDetail">
+		SELECT P.PLAYREV_CD "PLAYREV_CD", P.REV_DISTIN_CD "REV_DISTIN_CD", C.COMPANION_CD "COMPANION_CD"
+		, C.COMPANION "COMPANION", TO_CHAR(P.PLAYREV_DT, 'YYYY-MM-DD') "PLAYREV_DT", P.TITLE "TITLE"
+		, P.RATING_CD "RATING_CD", P.CONTENTS "CONTENTS", P.PLAY_IMG "PLAY_IMG"
+		, TO_CHAR(P.PLAY_DT, 'YYYY-MM-DD') "PLAY_DT", P.PLAY_TIME "PLAY_TIME", P.PLAY_MONEY "PLAY_MONEY"
+		, P.PLAY_CAST "PLAY_CAST", P.VIEW_CNT "VIEW_CNT"
+		FROM TBL_PLAY_REV P, TBL_COMPANION C
+		WHERE P.COMPANION_CD = C.COMPANION_CD AND P.REV_DISTIN_CD = '${rev_distin_cd}'
+ 	</select>
+ 	
+ 	<!-- 일반 좌석 리뷰 수정 -->
+ 	<update id="modifySeatReview">
+ 		UPDATE TBL_SEAT_REV 
+		SET VIEW_RATING=${view_rating}, SEAT_RATING=${seat_rating}, LIGHT_RATING=${light_rating}, SOUND_RATING=${sound_rating}
+		, SEAT_FLOW=${seat_flow}, SEAT_AREA='${seat_area}', SEAT_LINE='${seat_line}', SEAT_NUM=${seat_num}, SEAT_REV='${seat_rev}'
+		WHERE REV_DISTIN_CD = '${rev_distin_cd}'
+ 	</update>
+ 	
+ 	<!-- 5대 공연장 좌석 리뷰 수정 -->
+ 	<update id="modifyMSeatReview">
+ 		UPDATE TBL_MSEAT_REV 
+		SET MSEAT_SORT_CD='${mseat_sort_cd}', VIEW_RATING=${view_rating}, SEAT_RATING=${seat_rating}, LIGHT_RATING=${light_rating}, SOUND_RATING=${sound_rating}
+		, SEAT_FLOW=${seat_flow}, SEAT_AREA='${seat_area}', SEAT_LINE='${seat_line}', SEAT_NUM=${seat_num}, SEAT_REV='${seat_rev}'
+		WHERE REV_DISTIN_CD = '${rev_distin_cd}'
+ 	</update>
+ 	
+ 	<!-- 공연 상세 리뷰 수정 -->
+ 	<update id="modifyReviewDetail">
+ 		UPDATE TBL_PLAY_REV SET COMPANION_CD=${companion_cd}, TITLE='${title}', RATING_CD=${rating_cd}, CONTENTS='${contents}', PLAY_DT=TO_DATE('${play_dt}', 'YY-MM-DD'), PLAY_TIME='${play_time}', PLAY_MONEY=${play_money}, PLAY_CAST='${play_cast}' WHERE REV_DISTIN_CD = '${rev_distin_cd}'
+ 	</update>
+ 	
+ 	<!-- 공연 상세 리뷰 삭제 -->
+ 	<delete id="removeReviewDetail">
+ 		DELETE
+		FROM TBL_PLAY_REV
+		WHERE REV_DISTIN_CD = '${rev_distin_cd}'
+ 	</delete>
+ 	
+ 	<!-- 5대 공연장 좌석 리뷰 삭제 -->
+ 	<delete id="removeMSeatReview">
+ 		DELETE
+		FROM TBL_MSEAT_REV
+		WHERE REV_DISTIN_CD = '${rev_distin_cd}'
+ 	</delete>
+ 	
+ 	<!-- 일반 공연장 좌석 리뷰 삭제 -->
+ 	<delete id="removeSeatReview">
+ 		DELETE
+		FROM TBL_SEAT_REV
+		WHERE REV_DISTIN_CD = '${rev_distin_cd}'
+ 	</delete>
+ 	
+	<!-- 리뷰 식별코드 삭제 -->
+	<delete id="removeReviewDistin">
+ 		DELETE
+		FROM TBL_REV_DISTIN
+		WHERE REV_DISTIN_CD = '${rev_distin_cd}'
+ 	</delete>
+ 	
+ 	<!-- 리뷰식별코드로 공연장 코드 판별 -->
+ 	<select id="searchTheaterCd" resultType="java.lang.String">
+		SELECT P.THEATER_CD
+		FROM TBL_PLAY P, TBL_REV_DISTIN RD
+		WHERE P.PLAY_CD=RD.PLAY_CD AND RD.REV_DISTIN_CD='${rev_distin_cd}'
+ 	</select>
+ 	
+ 	<!-- 리뷰 수정 시 포스터 수정 처리 액션 -->
+ 	<update id="modifyPosterImg">
+	 	UPDATE TBL_PLAY_REV
+		SET PLAY_IMG='${play_img}'
+		WHERE REV_DISTIN_CD='${rev_distin_cd}'
+ 	</update>
+ 	
+ 	<!-- 리뷰 작성 시 포인트 추가 액션 -->
+ 	<update id="plusPoint">
+	 	INSERT INTO TBL_POINT(POINT_CD, USER_CD, POINT_Y_CD, POINT_DT)
+		VALUES('PT' || TO_CHAR(SEQ_POINT.NEXTVAL), '${user_cd}', 4, SYSDATE)
+ 	</update>
+ 	
+ 	<!-- 리뷰 삭제 시 포인트 삭제 액션 -->
+ 	<update id="minusPoint">
+	 	INSERT INTO TBL_POINT(POINT_CD, USER_CD, POINT_Y_CD, POINT_DT)
+		VALUES('PT' || TO_CHAR(SEQ_POINT.NEXTVAL), '${user_cd}', 8, SYSDATE)
+ 	</update>
+
+</mapper>

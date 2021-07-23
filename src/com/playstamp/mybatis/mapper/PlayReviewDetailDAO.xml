@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.playstamp.playreviewdetail.mybatis.IPlayReviewDetailDAO">
+	<select id="getPlayReviewDetail" resultType="com.playstamp.playreviewdetail.PlayReviewDetail" parameterType="string">
+		SELECT PLAYREV_CD, RATING_CD, PLAY_IMG, TITLE, PLAYREV_DT, CONTENTS, PLAY_DT, PLAY_TIME, PLAY_NM, THEATER, PLAY_CAST, COMPANION, USER_NICK, USER_CD, LCOUNT, CCOUNT
+		FROM VIEW_PLAYREVDETAIL
+		WHERE PLAYREV_CD=#{playrev_cd}
+	</select>
+	
+	<select id="getCommentList" resultType="com.playstamp.playreviewdetail.Comment" parameterType="string">
+		SELECT COMMENT_CD, PLAYREV_CD, WR_DT, COMMENTS, USER_NICK, USER_CD
+		FROM VIEW_COMMENT
+		WHERE PLAYREV_CD=#{playrev_cd}
+		ORDER BY WR_DT DESC
+	</select>
+	
+	<insert id="addComment">
+		INSERT INTO TBL_COMMENT(COMMENT_CD, PLAYREV_CD, USER_CD, WR_DT, COMMENTS)
+		VALUES(COMMENT_SEQ.NEXTVAL, #{playrev_cd}, #{user_cd}, SYSDATE, #{comments})
+	</insert>
+	
+	<delete id="removeComment">
+		DELETE
+		FROM TBL_COMMENT
+		WHERE COMMENT_CD=#{comment_cd}
+	</delete>
+	
+	<insert id="addHeart">
+		INSERT INTO TBL_LIKE(LIKE_CD, PLAYREV_CD, USER_CD, LIKE_DT)
+		VALUES(LIKE_SEQ.NEXTVAL, #{playrev_cd}, #{user_cd}, SYSDATE)
+	</insert>
+	
+	<select id="countHeart" resultType="Integer">
+		SELECT LCOUNT
+		FROM VIEW_HEARTCOUNT
+		WHERE PLAYREV_CD=#{playrev_cd}
+	</select>
+	
+	<select id="checkHeart" resultType="Integer">
+		SELECT COUNT(*) AS CCOUNT
+		FROM TBL_LIKE
+		WHERE PLAYREV_CD=#{playrev_cd} AND USER_CD=#{user_cd}
+	</select>
+	
+	<delete id="delHeart">
+		DELETE
+		FROM TBL_LIKE
+		WHERE PLAYREV_CD=#{playrev_cd} AND USER_CD=#{user_cd}
+	</delete>
+	
+	<select id="checkRepCom" resultType="com.playstamp.playreviewdetail.CommentBlind" parameterType="string">
+		SELECT COMMENT_CD, REP_COM_CD, REP_DT, REP_COMCH_CD, REP_ST_CD
+		FROM VIEW_COMMENT_BLIND
+		WHERE COMMENT_CD=#{comment_cd} AND ROWNUM=1
+	</select>
+		
+	<select id="getRatingAvg" resultType="integer" parameterType="string">
+		SELECT ROUND(SUM(RATING_CD)/COUNT(*))
+		FROM VIEW_RATING_AVG
+		WHERE PLAY_CD=#{play_cd}
+	</select>
+	
+	<insert id="addHeartPoint">
+		INSERT INTO TBL_POINT(POINT_CD, USER_CD, POINT_Y_CD, POINT_DT)
+		VALUES('PT'||SEQ_POINT.NEXTVAL, #{user_cd}, 2, SYSDATE)
+	</insert>
+	
+	<insert id="delHeartPoint">
+		INSERT INTO TBL_POINT(POINT_CD, USER_CD, POINT_Y_CD, POINT_DT)
+		VALUES('PT'||SEQ_POINT.NEXTVAL, #{user_cd}, 6, SYSDATE)
+	</insert>
+		
+	<select id="countAddHeart" resultType="Integer">
+		SELECT COUNT(*)
+		FROM TBL_POINT
+		WHERE TO_CHAR(POINT_DT, 'YYYY-MM-DD')=TO_CHAR(SYSDATE, 'YYYY-MM-DD') AND USER_CD=#{user_cd} AND POINT_Y_CD=2
+	</select>
+	
+	<select id="ifUserAddHeart" resultType="string">
+		SELECT POINT_CD
+		FROM VIEW_IF_USER_ADD_HEARTPOINT
+		WHERE USER_CD=#{user_cd, jdbcType=VARCHAR} AND PLAYREV_CD=#{playrev_cd, jdbcType=VARCHAR} AND POINT_Y_CD=2 AND ROWNUM=1
+	</select>
+		
+	<insert id="addCommentPoint">
+		INSERT INTO TBL_POINT(POINT_CD, USER_CD, POINT_Y_CD, POINT_DT)
+		VALUES('PT'||SEQ_POINT.NEXTVAL, #{user_cd}, 3, SYSDATE)
+	</insert>
+	
+	<insert id="delCommentPoint">
+		INSERT INTO TBL_POINT(POINT_CD, USER_CD, POINT_Y_CD, POINT_DT)
+		VALUES('PT'||SEQ_POINT.NEXTVAL, #{user_cd}, 7, SYSDATE)
+	</insert>
+		
+	<select id="countAddComment" resultType="Integer">
+		SELECT COUNT(*)
+		FROM TBL_POINT
+		WHERE TO_CHAR(POINT_DT, 'YYYY-MM-DD')=TO_CHAR(SYSDATE, 'YYYY-MM-DD') AND USER_CD=#{user_cd} AND POINT_Y_CD=3
+	</select>
+	
+	<select id="ifUserAddComment" resultType="com.playstamp.playreviewdetail.CommentPoint" parameterType="string">
+		SELECT POINT_Y_CD, POINT_CD
+		FROM VIEW_IF_USER_ADD_COMPOINT
+		WHERE COMMENT_CD=#{comment_cd}
+	</select>
+</mapper>

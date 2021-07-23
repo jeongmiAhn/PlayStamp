@@ -1,0 +1,102 @@
+@charset "UTF-8";
+
+body { background-color: #f2f2f2; }
+
+.card {
+    width: 800px;
+    padding: 20px; 
+    border: none;
+    margin-top: 50px !important;
+    margin-bottom: 50px;
+    background-color: #fff;
+    margin: 0 auto;
+}
+
+.formContent { text-align: center !important; }
+.formContent > img { 
+	width : 300px; 
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+.container, .termsAgree {
+    margin: 0 auto;
+    max-width: 768px;
+    min-width: 460px;
+}
+
+#content, #termsAgree {
+    width: 540px;
+    margin: 0 auto;
+}
+
+ul {
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 0;
+}
+
+input {height: 56px !important; width: 100%;}
+
+#chk { width:20px !important;}
+
+/* input
+{
+	display: block;
+    position: relative;
+    width: 100%;
+    height: 50px;
+    border: solid 1px #dadada;
+    padding: 8px 100px 10px 14px;
+    background: #fff;
+    box-sizing: border-box;
+} */
+
+button
+{
+	height: 50px;
+}
+
+ul>li{list-style: none}
+a{text-decoration: none;}
+
+.chkInput {width: 82%; display: inline-block;}
+.checkBox textarea{width: 96%;height: 90px; margin: 0 2%;background-color: #f7f7f7;color: #888; border: none;}
+.footBtwrap{margin-top: 15px;}
+
+
+
+.joinTitle
+{
+	margin: 19px 0 8px;
+    font-size: 14px;
+    font-weight: 700;	
+}
+
+.joinInputBox {
+    width: 100%;
+}
+
+.phoneInputBox {
+    width: 30%;
+    display: inline-block;
+}
+
+.emailInputBox
+{
+	width: 46%;
+	display: inline-block;
+    position: relative;
+    height: 50px;
+    border: solid 1px #dadada;
+    padding: 8px 100px 10px 14px;
+    background: #fff;
+    box-sizing: border-box;
+    align-items: center;
+}
+
+.termsAgreeInput {height: 16px;}

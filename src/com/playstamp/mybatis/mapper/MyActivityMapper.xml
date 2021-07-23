@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.playstamp.myactivity.mybatis.IMyActivityDAO">
+
+	<!-- 좋아요 한 총 리뷰 글 개수 출력 -->
+	<select id="likeReviewCount" resultType="int">
+		select count(*) as count
+		from view_mylike_rev
+		where user_cd = '${user_cd}'
+	</select>
+	
+	<!-- 댓글 단 총 리뷰 글 개수 출력 -->
+	<select id="commentReviewCount" resultType="int">
+		select count(*) as count
+		from view_mycomment_rev
+		where user_cd='${user_cd}'
+	</select>
+	
+	<!-- 연극 총 개수 출력 -->
+	<select id="playCount" resultType="int">
+		select count(*) as count
+		from tbl_play
+	</select>
+	
+	<!-- 좋아요 한 리뷰 글들 가져오기 -->
+	<select id="getLikeListWithPaging" resultType="com.playstamp.myactivity.MyLikeCommentReview">
+	<![CDATA[
+		select bno, playrev_cd, play_cd, play_nm, title, user_nick, playrev_dt, view_cnt, rev_distin_cd
+		from
+		(
+    		select row_number() over(order by playrev_dt) as bno, playrev_cd, play_cd, play_nm, title, user_nick, playrev_dt, view_cnt, user_cd, rev_distin_cd
+    		from view_mylike_rev
+		    where user_cd = '${user_cd}'
+		    order by bno desc
+		)
+		where bno > #{total} - (#{pageNum}*#{amount}) and bno <= #{total} - ((#{pageNum}-1) * #{amount})
+	]]>
+	</select>
+	
+	<!-- 댓글 단 리뷰 글들 가져오기 -->
+	<select id="getCommentListWithPaging" resultType="com.playstamp.myactivity.MyLikeCommentReview">
+	<![CDATA[
+		select bno, playrev_cd, play_cd, play_nm, title, user_nick, playrev_dt, view_cnt, rev_distin_cd
+		from
+		(
+	    	select row_number() over(order by playrev_dt) as bno, playrev_cd, play_cd, play_nm, title, user_nick, playrev_dt, view_cnt, user_cd, rev_distin_cd
+	    	from view_mycomment_rev
+	    	where user_cd ='${user_cd}'
+	    	order by bno desc
+		)
+		where bno>(#{pageNum}-1)*#{amount} and bno<= #{pageNum} * #{amount}
+	]]>
+	</select>
+	
+	<!-- 내가 신고한 글들 가져오기 -->
+	<select id="myReportingList" resultType="com.playstamp.myactivity.MyReportList">
+	<![CDATA[
+		SELECT BNO, REP_CONTENTS, WRITER, REPORTER, REP_Y, REP_DT, BOARDCATEGORY, REP_CD, REPORTED_CD, REP_ST, REP_CH_DT
+		FROM
+		(
+    		SELECT BNO, REP_CONTENTS, WRITER, REPORTER, REP_Y, REP_DT, BOARDCATEGORY, REP_CD, REPORTED_CD, REP_ST, REP_CH_DT
+    		FROM
+    		(
+        		SELECT ROW_NUMBER() OVER(ORDER BY REP_DT) AS BNO, REP_CONTENTS, WRITER, REPORTER, REP_Y, REP_DT, BOARDCATEGORY, REP_CD, REPORTED_CD, REP_ST, REP_CH_DT
+				FROM VIEW_MYREPORT
+				WHERE REPORTER='${user_cd}'
+				ORDER BY BNO DESC
+    		)
+    		WHERE BNO <= #{total} - ((#{pageNum}-1) * #{amount})
+    	)
+		WHERE BNO > #{total} - (#{pageNum}*#{amount})
+	]]>
+	</select>
+	
+	<!-- 내가 신고 당한 글들 가져오기 -->
+	<select id="myReportedList" resultType="com.playstamp.myactivity.MyReportList">
+	<![CDATA[
+		SELECT BNO, REP_CONTENTS, WRITER, REPORTER, REP_Y, REP_DT, BOARDCATEGORY, REP_CD, REPORTED_CD, REP_ST, REP_CH_DT
+		FROM
+		(
+	    	SELECT BNO, REP_CONTENTS, WRITER, REPORTER, REP_Y, REP_DT, BOARDCATEGORY, REP_CD, REPORTED_CD, REP_ST, REP_CH_DT
+	    	FROM
+	    	(
+	        	SELECT ROW_NUMBER() OVER(ORDER BY REP_DT) AS BNO, REP_CONTENTS, WRITER, REPORTER, REP_Y, REP_DT, BOARDCATEGORY, REP_CD, REPORTED_CD, REP_ST, REP_CH_DT
+				FROM VIEW_MYREPORT
+				WHERE WRITER='${user_cd}'
+				ORDER BY BNO DESC
+	    	)
+	    	WHERE BNO <= #{total} - ((#{pageNum}-1) * #{amount})
+	    )
+		WHERE BNO > #{total} - (#{pageNum}*#{amount})
+	]]>
+	</select>
+	
+	
+	<!-- 내가 신고한 글들 개수 가져오기 -->
+	<select id="reportingTotal" resultType="int">
+		SELECT COUNT(*) AS COUNT
+		FROM VIEW_MYREPORT
+		WHERE REPORTER='${user_cd}'
+	</select>
+	
+	<!-- 내가 신고당한 글들 개수 가져오기 -->
+	<select id="reportedTotal" resultType="int">
+		SELECT COUNT(*) AS COUNT
+		FROM VIEW_MYREPORT
+		WHERE WRITER='${user_cd}'
+	</select>
+	
+</mapper>

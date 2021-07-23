@@ -1,0 +1,93 @@
+@charset "UTF-8";
+
+	.graph
+	{
+		width: 250px;
+		margin-right: 20px;
+	 	margin-left: 20px;
+	 	margin-bottom: 10px;
+	 	padding-bottom: 10px;
+	}
+	
+	.graphicon
+	{
+		width: 80px;
+		height: 80px;
+		margin-bottom: 5px;
+	}
+	 
+	 .userInfo
+	 {
+	 	width: 250px;
+	 	height: 130px;
+	 	text-align: center;
+	 	font-size: 13pt;
+		font-weight: bold;
+		border: 1px solid;
+		border-color: #cacff7;
+		border-radius: 1em;
+	 }
+	 
+	 #userInfoContainer
+	 {
+	 	margin-top: 30px;
+	 	background-color: #f2f2f2;
+	 }
+	 
+	 #reviewInfoContainer
+	 {
+	 	margin-top: 10px;
+	 	background-color: #f2f2f2;
+	 }
+	 
+	 #graphTable, #graph
+	 {
+	 	position: relative;
+	 	left: 330px;
+	 	bottom: 270px;
+	 }
+	 
+	 
+	 #graphTable td
+	 {
+	 	text-align: center;
+	 	font-weight: bold;
+	 }
+	 
+	#reportList
+	{
+		bottom: 230px;
+		position: relative;
+		
+	}
+	
+	#alerticon
+	{
+		width: 20px;
+		margin-bottom: 5px;
+		margin-right: 10px;
+	}
+	
+	#reportListIntro
+	{
+		font-weight: bold;
+	}
+	
+	#userTotal, #reviewTotal
+	{
+		margin-top: 5px;
+		margin-bottom: 5px;
+		text-align: center;
+	}
+	
+	#userCount, #reviewCount
+	{
+		margin-bottom: 5px;
+		font-size: 15pt;
+	}
+	
+	.table-striped
+	{
+		margin-left: 15px;
+	}
+	
