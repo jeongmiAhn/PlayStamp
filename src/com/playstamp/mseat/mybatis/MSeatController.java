@@ -43,14 +43,14 @@ public class MSeatController
 			{
 				if(grade.equals("우수회원") || grade.equals("준회원") || grade.equals("일반회원"))
 				{
-					return "WEB-INF/views/MSeatMain.jsp";
+					return "WEB-INF/views/mseat/MSeatMain.jsp";
 				}
 				else if(grade.equals("어둠회원") || grade.equals("뉴비"))
 				{
 					response.setContentType("text/html;charset=utf-8");
 					PrintWriter printwriter = response.getWriter();
 						
-					printwriter.print("<script>alert('일반회원등급 이상 이용이 가능합니다.');history.back();</script>");
+					printwriter.print("<script>alert('준회원등급 이상 이용이 가능합니다.');history.back();</script>");
 					printwriter.flush();
 					printwriter.close();
 				}
@@ -61,7 +61,7 @@ public class MSeatController
 			System.out.println(e.toString());
 		}
 	
-		return "WEB-INF/views/MSeatMain.jsp";
+		return "WEB-INF/views/mseat/MSeatMain.jsp";
 
 	}
 	
