@@ -82,7 +82,7 @@
 	<select id="ifUserAddHeart" resultType="string">
 		SELECT POINT_CD
 		FROM VIEW_IF_USER_ADD_HEARTPOINT
-		WHERE USER_CD=#{user_cd, jdbcType=VARCHAR} AND PLAYREV_CD=#{playrev_cd, jdbcType=VARCHAR} AND POINT_Y_CD=2 AND ROWNUM=1
+		WHERE USER_CD=#{user_cd, jdbcType=VARCHAR} AND PLAYREV_CD=#{playrev_cd, jdbcType=VARCHAR}
 	</select>
 		
 	<insert id="addCommentPoint">

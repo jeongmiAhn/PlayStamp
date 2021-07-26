@@ -225,22 +225,24 @@ public class PlayReviewDetailController
 		int returnValue = 0;
 		String point_cd = "";
 		int count = 0;
-		
+
 		try
-		{	
+		{			
 			//@@ 이미 좋아요를 눌렀을 경우
 			if (dao.checkHeart(like)!=0)
 			{
-				// 해당 리뷰로 좋아요 적립받았는지 확인
-				point_cd = dao.ifUserAddHeart(user_cd, like.getPlayrev_cd());
+				// 해당 좋아요로 포인트 적립받았는지 확인
+				if ((dao.ifUserAddHeart(user_cd, like.getPlayrev_cd())) != null && (dao.ifUserAddHeart(user_cd, like.getPlayrev_cd()).length() != 0))
+					point_cd = dao.ifUserAddHeart(user_cd, like.getPlayrev_cd());
 				
+				//System.out.println(user_cd);
 				//System.out.println(like.getPlayrev_cd());
+				//System.out.println("값: " + point_cd);
+				
 				//@@ 적립받았다면
-				if (!point_cd.equals("0"))
-				{
+				if (!point_cd.equals(""))
 					// 포인트 차감
 					dao.delHeartPoint(user_cd);
-				}
 				
 				//@@ 적립받지 않았다면 포인트 차감 x
 				
@@ -249,6 +251,7 @@ public class PlayReviewDetailController
 				// 0을 반환
 				returnValue = 0;
 			}
+			
 			//@@ 좋아요를 처음 눌렀을 경우
 			else if(dao.checkHeart(like)==0)
 			{
