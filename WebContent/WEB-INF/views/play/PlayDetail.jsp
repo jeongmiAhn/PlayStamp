@@ -221,8 +221,15 @@
 	
 		//@@ 일반 공연장 좌석 리뷰일 경우 ~
 		$(".btn-defualt0").click(function()
-		{			
-			popup = window.open("reportform.action", "reportform", "width=570, height=350, resizable = no, scrollbars = no");
+		{	
+			var w = 500;
+			var h = 300; 
+			
+			var xPos = (document.body.offsetWidth/2) - (w/2); // 가운데 정렬
+			xPos += window.screenLeft/2; // 듀얼 모니터일 때
+			var yPos = (document.body.offsetHeight/2) - (h/2);
+			
+			popup = window.open("reportform.action", "reportform", "width="+w+", height="+h+", left="+xPos+", top="+yPos+", resizable=no");
 			reportWhat = 0;
 			
 			seat_rev_cd = $(this).attr("data-seat");
@@ -234,7 +241,14 @@
 		//@@ 5대 좌석 리뷰일 경우 ~ 
 		$(".btn-defualt1").click(function()
 		{
-			popup = window.open("reportform.action", "reportform", "width=570, height=350, resizable = no, scrollbars = no");
+			var w = 500;
+			var h = 300; 
+			
+			var xPos = (document.body.offsetWidth/2) - (w/2); // 가운데 정렬
+			xPos += window.screenLeft/2; // 듀얼 모니터일 때
+			var yPos = (document.body.offsetHeight/2) - (h/2);
+			
+			popup = window.open("reportform.action", "reportform", "width="+w+", height="+h+", left="+xPos+", top="+yPos+", resizable=no");
 			reportWhat = 1;
 			
 			mseat_rev_cd = $(this).attr("data-seat");

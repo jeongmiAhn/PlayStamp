@@ -260,8 +260,8 @@
 				// 신고 o + 처리 2 / 신고 x
 				//console.log(checkSt[j]);
 				
-				//if ((check[i]==1 && checkSt[i]==2) || check[i]==0)
-				//{
+				if ((check[i]==1 && checkSt[i]==2) || check[i]==0)
+				{
 					//@@ 댓글을 작성한 사용자일 때만 삭제 버튼 활성화
 					if ($("#hiddenUser").val()==item.user_cd)
 					{
@@ -296,9 +296,9 @@
 						$("#comments").html(str);
 					}
 					
-				//}
+				}
 				//@@ 블라인드 처리 하는 경우
-				/*
+				
 				else if ((check[i]==1 && checkSt[i]==1) || (check[i]==1 && checkSt[i]==0))
 				{	
 					str += "<div data-replyNo='" + item.comment_cd + "' class='replyLi2'>"
@@ -311,7 +311,7 @@
 	                
 					$("#comments").html(str);
 				}
-				*/
+				
 			});//end each
 		});//end func
 	}
@@ -326,18 +326,32 @@
 		
 		$("#reportPlayRev").click(function()
 		{
-			popup = window.open("reportform.action", "reportform", "width=570, height=350, resizable = no, scrollbars = no");
+			var w = 500;
+			var h = 300; 
+			
+			var xPos = (document.body.offsetWidth/2) - (w/2); // 가운데 정렬
+			xPos += window.screenLeft/2; // 듀얼 모니터일 때
+			var yPos = (document.body.offsetHeight/2) - (h/2);
+			
+			popup = window.open("reportform.action", "reportform", "width="+w+", height="+h+", left="+xPos+", top="+yPos+", resizable=no");
 			reportWhat = 0;
 			
 		});
 		
 		$("#comments").on("click", ".replyLi2 button", function()
 		{
+			var w = 500;
+			var h = 300; 
+			
+			var xPos = (document.body.offsetWidth/2) - (w/2); // 가운데 정렬
+			xPos += window.screenLeft/2; // 듀얼 모니터일 때
+			var yPos = (document.body.offsetHeight/2) - (h/2);
+
 			var reply = $(this).parent();
 			
 			var replyNo = reply.attr("data-replyNo");
 			
-			popup = window.open("reportform.action", "reportform", "width=570, height=350, resizable = no, scrollbars = no");
+			popup = window.open("reportform.action", "reportform", "width="+w+", height="+h+", left="+xPos+", top="+yPos+", resizable=no");
 			reportWhat = 1;
 			comment_cd = replyNo;
 		});
