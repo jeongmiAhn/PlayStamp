@@ -7,6 +7,7 @@
 	<select id="getNoticeList" resultType="com.playstamp.notice.Notice">
 		SELECT NOTICE_CD, MNG_CD, TITLE, CONTENTS, WR_DT
 		FROM TBL_NOTICE
+		ORDER BY NOTICE_CD DESC
 	</select>
 	
 	<insert id="addNotice">
