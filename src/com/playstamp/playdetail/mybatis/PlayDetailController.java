@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.playstamp.playdetail.Jjim;
 import com.playstamp.playdetail.MseatRevBlind;
+import com.playstamp.playdetail.PlayDetail;
 import com.playstamp.playdetail.PlayRevBlind;
 import com.playstamp.playdetail.PlayRevPre;
 import com.playstamp.playdetail.SeatRev;
@@ -44,7 +45,16 @@ public class PlayDetailController
 		String play_cd = request.getParameter("play_cd");
 		String user_cd = "";
 		String user_id = "";
-
+		
+		//--------------------------------------------- 
+		String theater_cd = "";
+		
+		ArrayList<PlayDetail> playDetailList = dao.getPlayDetail(play_cd);
+		
+		for (PlayDetail playDetail : playDetailList)
+			theater_cd = playDetail.getTheater_cd();
+		
+		//-----------------------------------------------
 		if ((String) session.getAttribute("code") != null)
 			user_cd = (String) session.getAttribute("code");
 		if ((String) session.getAttribute("id") != null)
@@ -69,13 +79,13 @@ public class PlayDetailController
 		// @@ 5대 좌석 리뷰일 시 distin 에 1을 대입
 		if (mseatCheck > 0)
 		{
-			seatRev = dao.getMseatRev(play_cd);
+			seatRev = dao.getMseatRev(theater_cd);
 			distin = 1;
 		}
 
 		// @@ 일반 좌석 리뷰의 distin 은 0
 		if (seatCheck > 0)
-			seatRev = dao.getSeatRev(play_cd);
+			seatRev = dao.getSeatRev(theater_cd);
 
 		// @@ 좋아요 체크 메소드
 		int checkJjim = 0;
@@ -200,11 +210,11 @@ public class PlayDetailController
 		// addAttribute 를 통해 전송
 		model.addAttribute("distin", distin);
 		model.addAttribute("seatRevList", seatRev);
-		model.addAttribute("playDetailList", dao.getPlayDetail(play_cd));
+		model.addAttribute("playDetailList", playDetailList);
 		model.addAttribute("playRevPreList", playRevPreList);
 
 		// 테스트
-		// System.out.println("값: " + play_cd);
+		//System.out.println("값: " + ();
 		return "WEB-INF/views/play/PlayDetail.jsp";
 	}
 

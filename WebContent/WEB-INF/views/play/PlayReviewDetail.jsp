@@ -260,8 +260,8 @@
 				// 신고 o + 처리 2 / 신고 x
 				//console.log(checkSt[j]);
 				
-				if ((check[i]==1 && checkSt[i]==2) || check[i]==0)
-				{
+				//if ((check[i]==1 && checkSt[i]==2) || check[i]==0)
+				//{
 					//@@ 댓글을 작성한 사용자일 때만 삭제 버튼 활성화
 					if ($("#hiddenUser").val()==item.user_cd)
 					{
@@ -296,8 +296,9 @@
 						$("#comments").html(str);
 					}
 					
-				}
+				//}
 				//@@ 블라인드 처리 하는 경우
+				/*
 				else if ((check[i]==1 && checkSt[i]==1) || (check[i]==1 && checkSt[i]==0))
 				{	
 					str += "<div data-replyNo='" + item.comment_cd + "' class='replyLi2'>"
@@ -310,6 +311,7 @@
 	                
 					$("#comments").html(str);
 				}
+				*/
 			});//end each
 		});//end func
 	}
