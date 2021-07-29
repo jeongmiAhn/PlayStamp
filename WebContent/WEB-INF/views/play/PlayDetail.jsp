@@ -45,13 +45,21 @@
 	
 	#header { margin: auto; }
 	
-	#table { margin: auto; width: 80%; }	
+	#table { margin: auto; width: 80%; table-layout: fixed;}	
 	
 	#playReview { text-align: left; }
 	div#playReview > table > tbody > tr > td:nth-child(1) { width: 10px; }
 	div#playReview > table > tbody > tr > td:nth-child(2) { height: 10px; }
 	
 	div#seatReview > table > tbody > tr > td:nth-child(2) { text-align: center; }
+	
+	.contents
+	{
+	  	white-space: nowrap; /* 줄바꿈이 생겨도 넘어가지 않는다. */
+	  	text-overflow: ellipsis; /* 말줄임표를 표시한다. */
+	  	overflow: hidden; /* 영역을 넘어선 텍스트는 숨긴다. */
+ 	  	max-width: 500px; /* width 고정 */
+	}
 
 </style>
 <script type="text/javascript">	
@@ -377,7 +385,7 @@
 											onclick="location.href='playreviewdetail.action?playrev_cd=${playRevPre.playrev_cd}&play_cd=${playRevPre.play_cd}'">${playRevPre.title }</td>
 								  		</tr>
 								  		<tr>
-								  			<td colspan="2">${playRevPre.contents}</td>
+								  			<td class="contents" colspan="2">${playRevPre.contents}</td>
 								  		</tr>
 								  		<tr>
 								  			<td>
